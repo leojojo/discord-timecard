@@ -1,8 +1,9 @@
 import os, traceback
+from datetime import datetime
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='/')
-token = os.environ['DISCORD_BOT_TOKEN']
+TOKEN = os.environ['DISCORD_BOT_TOKEN']
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -11,7 +12,10 @@ async def on_command_error(ctx, error):
     await ctx.send(error_msg)
 
 @bot.command()
-async def ping(ctx):
-    await ctx.send('ほげ')
+async def echo(ctx, *args):
+    if len(args) > 0:
+        await ctx.send(f'{datetime.now()}\t{ctx.author} gave me {len(args)} arguments: {str(args)}')
+    else:
+        await ctx.send('ほげ')
 
-bot.run(token)
+bot.run(TOKEN)
