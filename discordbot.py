@@ -1,8 +1,16 @@
-import os, traceback
+import os, traceback, discord
+import cogs.timecard
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='/')
-token = os.environ['DISCORD_BOT_TOKEN']
+PREFIX = os.environ['DISCORD_PREFIX']
+TOKEN = os.environ['DISCORD_BOT_TOKEN']
+CONFIG = []
+bot = commands.Bot(command_prefix=PREFIX)
+
+@bot.event
+async def on_ready():
+    print(f'========== Logged in as {bot.user} ==========')
+    cogs.timecard.setup(bot, CONFIG)
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -10,8 +18,4 @@ async def on_command_error(ctx, error):
     error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
     await ctx.send(error_msg)
 
-@bot.command()
-async def ping(ctx):
-    await ctx.send('ほげ')
-
-bot.run(token)
+bot.run(TOKEN)
