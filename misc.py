@@ -1,5 +1,39 @@
-import os, gspread, random
+import os, re, gspread, random
 from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime, timedelta
+
+def parse_period(now, period='today'):
+    # default is today
+    datetime_str = now.strftime('%Y-%m-%d')
+    period_out = 'today'
+
+    if period == 'today':
+        pass
+    elif period == 'month':
+        datetime_str = now.strftime('%Y-%m')
+        period_out = 'this month'
+    elif period == 'year':
+        datetime_str = now.strftime('%Y')
+        period_out = 'this year'
+    else:
+        search = re.search('^(\d{1,4})/(\d{1,2})(/(\d{1,2}))?$', period)
+        if not search:
+            pass
+        else:
+            # Y-m-d
+            if search.group(4):
+                datetime_str = f'{search.group(1)}-{search.group(2)}-{search.group(4)}'
+                period_out = 'on ' + datetime_str
+            # Y-m
+            elif len(search.group(1)) == 4 and not search.group(4):
+                datetime_str = f'{search.group(1)}-{search.group(2)}'
+                period_out = 'on ' + datetime_str
+            # m-d
+            elif int(search.group(1)) <= 12 and int(search.group(2)) <= 31 and not search.group(4):
+                datetime_str = f'{search.group(1)}-{search.group(2)}'
+                period_out = 'on ' + datetime_str
+
+    return re.compile(datetime_str), period_out
 
 def sec2hourmin(seconds):
     hours = int(seconds / 3600)
