@@ -11,15 +11,23 @@ class Timecard(commands.Cog):
         self.bot = bot
         self.config = config
 
-    @commands.command(brief='返事をするよ/Echoes your words back')
+
+
+    @commands.command()
     async def echo(self, ctx, *args):
+        """返事をするよ/Echoes your words back"""
+
         if len(args) > 0:
             await ctx.send(f'{datetime.now()}\t{ctx.author} gave me {len(args)} arguments: {str(args)}')
         else:
             await ctx.send('ほげ')
-    
-    @commands.command(brief='勤怠を記録するよ/Records timestamp')
+
+
+
+    @commands.command()
     async def timecard(self, ctx):
+        """勤怠を記録するよ/Records timestamp"""
+
         wks = get_google_sheet().sheet1
         author = ctx.author.display_name
         now = datetime.now()
@@ -28,9 +36,18 @@ class Timecard(commands.Cog):
     
         text = f'{humor()} {author} registered at **{now.strftime("%I:%M %p")}**'
         await ctx.send(text)
-    
-    @commands.command(brief='勤務時間を表示するよ/Displays how long you worked')
+
+
+
+    @commands.command()
     async def worktime(self, ctx, period_input):
+        """
+        勤務時間を表示するよ/Displays how long you worked
+        - specify a day: `/worktime today`, `worktime 5/29`, `worktime 2020/05/29`
+        - specify a month: `/worktime month`, `/worktime 2020/05`
+        - specify an year: `/worktime year`
+        """
+
         wks = get_google_sheet().sheet1
         now = datetime.now()
         period_regex, period = parse_period(now, period_input)
@@ -74,10 +91,14 @@ class Timecard(commands.Cog):
         sessions = list( zip(times_today[::2], times_today[1::2]) )
         # list of pairs => list of timedelta of each pair
         sessions = list( map(lambda x : (x[1]-x[0]).total_seconds(), sessions) )
+        # print(sessions)   # debug times
     
         # sum of timedeltas
         hours, minutes = sec2hourmin(sum(sessions))
-        if int(hours) > 23 : raise ValueError('You have warped Spacetime.')
+        if int(hours) > 23 :
+            ctx.send_help(command)
+            raise ValueError('You have warped Spacetime.')
+
         text = f'{author} worked **{hours} hours {minutes} minutes** {period}'
         print(text)
         await ctx.send(text)

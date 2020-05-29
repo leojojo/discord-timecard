@@ -4,14 +4,26 @@
 /help
 ```
 ```
-No Category:
+Timecard:
   echo     返事をするよ/Echoes your words back
-  help     Shows this message
   timecard 勤怠を記録するよ/Records timestamp
   worktime 勤務時間を表示するよ/Displays how long you worked
+No Category:
+  help     Shows this message
 
 Type /help command for more info on a command.
 You can also type /help category for more info on a category.
+```
+```
+/help worktime
+```
+```
+/worktime <period_input>
+
+勤務時間を表示するよ/Displays how long you worked
+- specify a day: `/worktime today`, `worktime 5/29`, `worktime 2020/05/29`
+- specify a month: `/worktime month`, `/worktime 2020/05`
+- specify an year: `/worktime year`
 ```
 
 ## setup

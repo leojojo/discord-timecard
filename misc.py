@@ -2,6 +2,8 @@ import os, re, gspread, random
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime, timedelta
 
+
+
 def parse_period(now, period='today'):
     # default is today
     datetime_str = now.strftime('%Y-%m-%d')
@@ -16,6 +18,7 @@ def parse_period(now, period='today'):
         datetime_str = now.strftime('%Y')
         period_out = 'this year'
     else:
+        # matches 2020/05/29, 2020/05, 05/29 or the like
         search = re.search('^(\d{1,4})/(\d{1,2})(/(\d{1,2}))?$', period)
         if not search:
             pass
@@ -35,10 +38,14 @@ def parse_period(now, period='today'):
 
     return re.compile(datetime_str), period_out
 
+
+
 def sec2hourmin(seconds):
     hours = int(seconds / 3600)
     minutes = int(seconds / 60) % 60
     return hours, minutes
+
+
 
 def get_google_sheet():
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
@@ -58,7 +65,8 @@ def get_google_sheet():
     gc = gspread.authorize(credentials)
     return gc.open_by_url(os.environ['SHEET_URL'])
 
+
+
 def humor():
     entertain = ["Woo! :partying_face:", "Good Job :+1:", "Let's do this :muscle:"]
     return random.choice(entertain)
-
